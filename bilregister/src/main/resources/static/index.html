@@ -10,8 +10,64 @@
 <body>
 
 <script type="application/javascript">
+    // Array for å lagre informasjon om biler
     let motorvogner = [];
 
+    // Array med bilmerker
+    const carBrands = [
+        'Audi', 'BMW', 'Chevrolet', 'Ford', 'Honda', 'Hyundai', 'Kia', 'Lexus', 'Mercedes', 'Nissan',
+        'Toyota', 'Volkswagen', 'Volvo'
+    ];
+
+    // Objekt med bilmodeller for hvert merke
+    const carModels = {
+        "Audi": ["A1", "A3", "A4", "A5", "A6", "Q2", "Q3", "Q5", "Q7", "Q8", "TT", "R8", "e-tron"],
+        "BMW": ["1 Series", "2 Series", "3 Series", "4 Series", "5 Series", "6 Series", "7 Series", "X1", "X3", "X5", "X7", "Z4", "i3", "i8"],
+        "Chevrolet": ["Camaro", "Corvette", "Equinox", "Malibu", "Silverado", "Suburban", "Tahoe", "Traverse", "Trailblazer"],
+        "Ford": ["Escape", "Explorer", "F-150", "Focus", "Mustang", "Ranger", "Transit", "Edge", "Expedition", "Fusion"],
+        "Honda": ["Accord", "Civic", "CR-V", "Fit", "HR-V", "Insight", "Odyssey", "Passport", "Pilot", "Ridgeline"],
+        "Hyundai": ["Accent", "Elantra", "Kona", "Palisade", "Santa Fe", "Sonata", "Tucson", "Venue", "Ioniq", "Nexo"],
+        "Kia": ["Cadenza", "Forte", "K5", "Niro", "Optima", "Rio", "Seltos", "Sorento", "Soul", "Sportage", "Telluride"],
+        "Lexus": ["ES", "GS", "GX", "IS", "LC", "LS", "LX", "NX", "RC", "RX", "UX"],
+        "Mercedes": ["A-Class", "C-Class", "E-Class", "S-Class", "GLA", "GLB", "GLC", "GLE", "GLS", "G-Class", "CLA", "CLS", "SLC", "SL", "AMG GT"],
+        "Nissan": ["Altima", "Armada", "Frontier", "Kicks", "LEAF", "Maxima", "Murano", "Pathfinder", "Rogue", "Sentra", "Titan", "Versa"],
+        "Toyota": ["4Runner", "Avalon", "Camry", "Corolla", "Highlander", "Land Cruiser", "Prius", "RAV4", "Sequoia", "Sienna", "Tacoma", "Tundra", "Yaris"],
+        "Volkswagen": ["Arteon", "Atlas", "Beetle", "Golf", "ID.4", "Jetta", "Passat", "Tiguan", "Touareg"],
+        "Volvo": ["S60", "S90", "V60", "V90", "XC40", "XC60", "XC90"]
+    };
+
+    // Fyller inn bilmerke-dropdown når siden lastes inn
+    window.onload = function () {
+        fillBrandDropdown();
+    };
+
+    function fillBrandDropdown() {
+        const brandDropdown = document.getElementById("brand");
+        carBrands.forEach(brand => {
+            const option = document.createElement("option");
+            option.value = brand;
+            option.text = brand;
+            brandDropdown.appendChild(option);
+        });
+
+        // Oppdater modell-dropdown basert på valgt merke
+        updateModelDropdown();
+    }
+    // Funksjon for å oppdatere modell-dropdown basert på valgt merke
+    function updateModelDropdown() {
+        const selectedBrand = document.getElementById("brand").value;
+        const modelsForBrand = carModels[selectedBrand] || [];
+
+        const modelDropdown = document.getElementById("model");
+        modelDropdown.innerHTML = "";
+        modelsForBrand.forEach(model => {
+            const option = document.createElement("option");
+            option.value = model;
+            option.text = model;
+            modelDropdown.appendChild(option);
+        });
+    }
+    // Funksjon for å legge til en bil i listen
     function addCar() {
         const brand = document.getElementById("brand").value;
         const model = document.getElementById("model").value;
@@ -20,6 +76,7 @@
         const personnummer = document.getElementById("personnummer").value;
         const adresse = document.getElementById("adresse").value;
 
+        // Opprett bilobjekt
         const car = { brand, model, plateNumber, navn, personnummer, adresse };
         motorvogner.push(car);
 
@@ -42,11 +99,11 @@
             row.insertCell(1).textContent = car.model;
             row.insertCell(2).textContent = car.plateNumber;
             row.insertCell(3).textContent = car.navn;
-            row.insertCell(4).textContent = car.adresse;  // Corrected from "addresse"
+            row.insertCell(4).textContent = car.adresse;
             row.insertCell(5).textContent = car.personnummer;
         }
     }
-
+    // Tøm skjemaet
     function clearForm() {
         document.getElementById("brand").value = "";
         document.getElementById("model").value = "";
@@ -61,30 +118,28 @@
 <div id="app">
     <h1>Motorvognregister</h1>
 
-    <!-- Form to add a new car -->
     <form id="carForm">
         <label for="brand">Bilmerke:</label>
-        <input type="text" id="brand" required>
+        <select type="text" id="brand" onchange="updateModelDropdown()" required></select>
 
         <label for="model">Bilmodell:</label>
-        <input type="text" id="model" required>
+        <select type="text" id="model" required></select>
 
         <label for="plateNumber">Skiltnummer:</label>
         <input type="text" id="plateNumber" required>
 
-        <label for="navn">Navn</label>
+        <label for="navn">Navn:</label>
         <input type="text" id="navn" required>
 
-        <label for="adresse">Addresse</label>
-        <input type="text" id="adresse" required>  <!-- Corrected from "addresse" -->
+        <label for="adresse">Adresse:</label>
+        <input type="text" id="adresse" required>
 
-        <label for="personnummer">Personnummer</label>
+        <label for="personnummer">Personnummer:</label>
         <input type="number" id="personnummer">
 
         <button type="button" onclick="addCar()">Legg til motorvogn</button>
     </form>
 
-    <!-- Legger til tabell for leisten nedenfor -->
     <table id="carTable">
         <thead>
         <tr>
@@ -92,16 +147,15 @@
             <th>Bilmodell</th>
             <th>Skiltnummer</th>
             <th>Navn</th>
-            <th>Addresse</th>
+            <th>Adresse</th>
             <th>Personnummer</th>
         </tr>
         </thead>
         <tbody>
-        <!-- biler blir lagt til her -->
         </tbody>
     </table>
-    <!-- slett alle biler -->
-    <button type="button" onclick="deleteAllCars()">Slett alle biler</button>
+
+    <button type="button" id="slettKnapp" onclick="deleteAllCars()">Slett alle biler</button>
 </div>
 
 </body>
